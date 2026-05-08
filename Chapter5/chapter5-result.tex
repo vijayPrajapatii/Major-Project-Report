@@ -86,10 +86,9 @@ The per-graph IPS percentage difference of Nova-Alpha relative to Cascade is sho
 \end{tabular}
 \end{table}
 
-% IMAGE PLACEHOLDER: Insert the horizontal bar chart from PPT slide 24 (Nova-Alpha vs Cascade IPS percent difference per graph) here.
 \begin{figure}[htb]
 \centering
-	\includegraphics[scale=1]{Figures/universe}
+	\includegraphics[width=0.95\textwidth]{Figures/fig5_ipsdiff}
 	\caption{Nova-Alpha vs.\ Cascade -- IPS \% difference per graph}
 	\label{fig:ipsdiff}
 \end{figure}
@@ -97,10 +96,9 @@ The per-graph IPS percentage difference of Nova-Alpha relative to Cascade is sho
 \subsection{Root-Cause Analysis: MosaicNet\_W8A8}
 MosaicNet\_W8A8 is the worst-degraded test on Nova-Alpha. To isolate the cause, the IPS and the percentage difference of Coproc\_1\_STALLS and Coproc\_2\_STALLS were compared across Cascade (787 MHz), Nova-Alpha (787 MHz) and Nova-Gamma (1037 MHz). The IPS values observed were 487.7, 370.4 and 459.5 respectively, corresponding to $-24.1\%$ on Nova-Alpha and $-5.8\%$ on Nova-Gamma relative to Cascade. The Coproc\_2\_STALLS percentage difference was $-113\%$ on both Nova-Alpha and Nova-Gamma, while Coproc\_1\_STALLS percentage difference was approximately $+54\%$ to $+55\%$ (an improvement) on the Nova variants.
 
-% IMAGE PLACEHOLDER: Insert the dual-panel chart from PPT slide 25 (top: IPS bar chart for Cascade / Nova-Alpha / Nova-Gamma; bottom: Coproc\_1_STALLS and Coproc\_2_STALLS percent difference) here.
 \begin{figure}[htb]
 \centering
-	\includegraphics[scale=1]{Figures/universe}
+	\includegraphics[width=0.85\textwidth]{Figures/fig6_rca}
 	\caption{Root-cause analysis of MosaicNet\_W8A8 across Cascade, Nova-Alpha and Nova-Gamma}
 	\label{fig:rca}
 \end{figure}
