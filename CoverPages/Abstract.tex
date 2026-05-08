@@ -5,17 +5,12 @@
 \end{tikzpicture}
 
 
-Highlights of significant contributions: One page with 3 to 4 paragraphs\\
+In modern semiconductor development, hardware and software are designed together (co-design) to ensure system functionality and performance. Emulation platforms enable testing of software even before the actual silicon is available, helping in early validation of System-on-Chip (SoC) designs. Each test case executed on these platforms generates large log files that contain critical metrics such as bandwidth, clock cycles, instructions per second (IPS), stalls, and pass/fail status. With over 100 such logs generated per regression run, manual analysis becomes time-consuming, error-prone, and creates a major bottleneck in debugging and decision-making.\\
 
-Paragraph 1: Importance and relevance of Topic, reported issues and limitations of the topic in performance or computation etc, issues involved in those limitations, need for addressing those issues and a short note on how that is addressed in this report.
+The objective of this work is to design and develop an automated log analysis and performance evaluation system that replaces manual log-grepping with a single repeatable pipeline. The system integrates LogPAI (Drain algorithm) for structured log parsing, LogAI for machine learning-based clustering and anomaly detection, and Large Language Model (LLM) based modules for summary generation and root-cause analysis. Performance metrics are extracted from raw logs, organized into structured per-regression workbooks, and compared against a baseline configuration to compute percentage differences and identify degradations.\\
 
+The proposed system is implemented using Python 3 with Pandas, NumPy, regular expressions, and an LLM API on a Linux based emulation platform. It is validated on a test suite of 12 graphs spanning vision (MobileVision, MobileNetV4, MosaicNet, EDSR), language (LLaMA2-1B and LLaMA2-3B prefill/decode), and detection workloads (MobileBERT, MobileDetSSD). Six configurations - one Cascade baseline and five Nova variants - were compared. The pipeline compresses regression analysis time from several hours to approximately two minutes per regression, achieving a substantial productivity improvement for the validation team.\\
 
-Paragraph 2: Objectives of this work, short note on algebraic methods used and formulations achieved, computational procedures developed. \gls{ic}.
-
-
-Paragraph 3: Description of simulation procedure including SW tools used and choice of test cases. Short note on results achieved and significant highlights of improvements if any in terms of percentage , for example the architecture presented in this report shows 22 \% improve in power consumption as compared to the previously reported articles.
-\gls{ic}
-
-Paragraph 4: The last para needed only if emulation (after simulation) or Hardware developed to validate simulation results in para 3. 
+The system was further deployed on the Qualcomm emulation platform to validate performance regressions across silicon options. Results showed that Nova-Alpha (787 MHz) produced 7 out of 12 degraded tests, while Nova-Delta and Nova-Epsilon (1037 MHz) showed only 1 degraded test each, confirming that higher clock frequency compensates for most architectural differences. Root-cause analysis of MosaicNet\_W8A8 isolated HVX stalls as the dominant bottleneck, demonstrating the effectiveness of the automated pipeline in directing engineers towards the actual hardware/software issue.
 
 \pagebreak

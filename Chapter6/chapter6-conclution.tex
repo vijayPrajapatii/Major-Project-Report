@@ -1,20 +1,28 @@
 \chapter{Conclusion and Future Scope}
-Every chapter should start with an introduction paragraph. This paragraph should brief about the flow of the chapter. This introduction can be limited within 4 to 5 sentences. The chapter heading should be appropriately modified (a sample heading is shown for this chapter). But don't start the introduction paragraph in the chapters like "This chapter deals with....". Instead you should bring in the highlights of the chapter in the introduction paragraph.
+This chapter concludes the project work on the AI-based automated log analysis and performance evaluation system, summarizing the key contributions, the results obtained, and the limitations of the current implementation. The chapter also outlines possible directions for extending the work in future and lists the learning outcomes from the project.
 
 \section{Conclusion}
-This chapter should not contain an introduction paragraph like other chapters. You can directly write conclusion of the work done under this section. Typically this section can have 3 to 4 paragraphs. 
+The pre-silicon validation of modern System-on-Chip designs depends critically on the ability to interpret a large volume of emulation logs that are produced for each regression run. The objectives of this project were three-fold: to replace manual log-grepping with a single automated pipeline that runs per regression and produces repeatable outputs for any engineer in the core team; to compress regression analysis time from several hours to approximately two minutes per regression by automating the extraction and formatting of results; and to standardize customer-request reporting through per-regression three-sheet workbooks and a final multi-option comparison workbook (Cascade vs.\ Nova-*), enabling fast degradation detection and root-cause direction using automatically computed percentage differences and stall/bandwidth indicators.
 
-First paragraph should bring in the scenario of the project and every objective should be explained here.
+These objectives were addressed through a four-stage pipeline that integrates LogPAI's Drain algorithm for structured log parsing, LogAI for ML-based clustering and anomaly detection, regular-expression based extraction for deterministic counters, and an LLM API for natural-language summary generation and root-cause hints. The pipeline was implemented in Python 3 using Pandas, NumPy and \texttt{openpyxl}, with Git for version control on a Linux based development environment. The implementation produces per-regression three-sheet workbooks and a final multi-option comparison workbook with a degradation summary, satisfying the customer-request reporting standard.
 
-Second paragraph should say how the objectives are implemented and achieved.
-
-Last paragraph should draw the conclusions from each objective with quantitative results, performance improvement etc. 
+Quantitatively, the pipeline reduced the regression analysis time from several hours of manual work to approximately two minutes per regression, achieving a substantial productivity improvement. On the reference test suite of twelve graphs across six configurations, the system correctly identified that Nova-Alpha (running at 787 MHz, the same clock as Cascade) exhibits seven degraded tests, while Nova-Delta and Nova-Epsilon (1037 MHz) exhibit only one degraded test each. The root-cause analysis of MosaicNet\_W8A8 isolated HVX stalls as the dominant bottleneck (HVX\_STALLS percentage difference of \(-113\%\) on both Nova-Alpha and Nova-Gamma), with the IPS gap shrinking from \(-24.1\%\) on Nova-Alpha to \(-5.8\%\) on Nova-Gamma due to the higher clock frequency. These results demonstrate that the proposed pipeline meets all three project objectives.
 
 \section{Future Scope}
-Briefly discuss the constraints and limitations of the project and state the possibilities of extending the work in future.
-\section{Learning Outcomes of the Project}
+The current implementation is constrained by the fixed log format of the in-house emulation platform and by the curated set of regular expressions for metric extraction. Possible directions for extending the work in future include:
 \begin{itemize}
-\item List the learning outcomes here
-\item List a minimum of 5 learning outcomes
+\item Generalizing the parser to handle log formats from multiple emulation and silicon platforms by replacing the fixed regex set with semantic, LLM-driven parsing.
+\item Extending the LogAI module with supervised anomaly detection trained on labelled regressions, so that the system can rank degradations by the likelihood of being functional rather than purely architectural.
+\item Adding a continuous regression mode in which the pipeline runs as a service and posts results to a dashboard in real time, instead of being invoked per regression.
+\item Closing the loop with the build system so that detected root causes (compiler version, build flags) can be correlated automatically with code changes.
+\item Hardening the LLM stage by caching prompt-response pairs and fine-tuning on internal post-mortems to improve the quality of root-cause hints.
 \end{itemize}
 
+\section{Learning Outcomes of the Project}
+\begin{itemize}
+\item Gained an in-depth understanding of pre-silicon emulation-based validation and of the role of log analysis in the SoC development cycle.
+\item Learned the Drain algorithm and the LogPAI / LogAI ecosystem for structured log parsing, clustering and anomaly detection.
+\item Developed practical skills in building production-grade Python pipelines using Pandas, NumPy, regular expressions and \texttt{openpyxl}.
+\item Acquired hands-on experience with LLM APIs (GPT / Claude) for summary generation and root-cause direction in a non-trivial industrial workflow.
+\item Improved skills in technical writing, version control with Git, and reproducible reporting through standardized Excel workbooks.
+\end{itemize}

@@ -1,19 +1,68 @@
-\chapter{Implementation of Pipelined Analog to Digital converter}
+\chapter{Implementation of the Automated Log Analysis Pipeline}
 
-Every chapter should start with an introduction paragraph. This paragraph should brief about the flow of the chapter. This introduction can be limited within 4 to 5 sentences. The chapter heading should be appropriately modified (a sample heading is shown for this chapter).But don't start the introduction paragraph in the chapters like "This chapter deals with....". Instead you should bring in the highlights of the chapter in the introduction paragraph. 
+This chapter describes the implementation of the four-stage pipeline introduced in Chapter 3. It covers the top-level Python module structure, the log ingestion and preprocessing routines, the regular-expression based metric extraction, the structured workbook generation, the comparison engine that computes per-metric percentage differences, and the LLM-based summary and root-cause analysis stage.
 
 \section{Contents of this chapter}
-This chapter should elaborate the following in detail.
+This chapter elaborates the following in detail.
 \begin{enumerate}
-\item Implementation details for hardware based projects
-\item Top level Design for software based projects
+\item Implementation details for the software-based pipeline.
+\item Top-level design of the Python modules and their interaction.
 \end{enumerate}
 
-You can add sections and sub sections to elaborate your project work done.
+\section{Top-level Design}
+The pipeline is organized as a set of cooperating Python modules, each responsible for one stage of the methodology.
+\begin{itemize}
+\item \texttt{ingest.py} - walks the regression directory, locates per-graph log files for each option under test, and validates that all expected files are present.
+\item \texttt{preprocess.py} - performs textual normalization on raw log lines (timestamp stripping, whitespace normalization).
+\item \texttt{parse.py} - invokes LogPAI's Drain parser to produce structured templates and a parsed CSV per log.
+\item \texttt{extract.py} - applies a curated set of regular expressions to extract the performance counters listed in Chapter 3 (cycles, IPS, bandwidth, HMX/HVX/scalar counters, stalls, spill/fill bytes etc.) and emits a per-graph metrics record.
+\item \texttt{analyze.py} - performs LogAI-based clustering and anomaly detection on the parsed structured logs, and merges the results with the extracted metrics record.
+\item \texttt{compare.py} - performs the baseline-vs-options comparison, computes per-metric percentage differences, and flags degraded tests according to the IPS threshold.
+\item \texttt{report.py} - produces the per-regression three-sheet workbook (raw, derived, summary) and the final multi-option comparison workbook.
+\item \texttt{llm.py} - calls the LLM API to generate the natural-language summary and a root-cause hint for each degraded test, using the structured metrics as the prompt context.
+\item \texttt{notify.py} - sends email alerts and posts status updates with the link to the generated workbook.
+\end{itemize}
+
+\section{Implementation Details}
+
+\subsection{Log Ingestion and Preprocessing}
+The ingestion module walks the regression directory and verifies that the expected number of logs is present (twelve graphs $\times$ six options = seventy-two logs per regression). Missing logs are reported but do not block the pipeline; the corresponding cells in the comparison workbook are flagged. Preprocessing strips timestamps and platform-specific banner lines so that downstream parsing operates on a clean stream.
+
+\subsection{Structured Parsing using LogPAI Drain}
+LogPAI's Drain parser is invoked with a configured similarity threshold and depth. The output is a parsed CSV containing one row per log line, with columns for the template ID, the variable parameters and the original line. The parsed CSVs feed the analysis engine.
+
+\subsection{Metric Extraction}
+The metric extraction module uses a curated dictionary of regular expressions, one per counter. Each regex is anchored to the surrounding banner text so that values are matched unambiguously. The output is a Python dictionary that is converted into a Pandas DataFrame and written as a CSV per option.
+
+\subsection{Comparison Engine}
+The comparison engine reads the per-option DataFrames and computes the percentage difference of every metric against the Cascade baseline using Eqn.\ \ref{eqn:pctdiff} from Chapter 3. The result is reshaped into a two-dimensional table with one row per graph and one column per (metric, option) pair, which becomes the third sheet of the per-regression workbook.
+
+\subsection{LLM-based Summary and Root-Cause Analysis}
+For each test that is flagged as degraded, the LLM module assembles a compact prompt containing the metrics that differ most from the baseline (typically IPS, HMX\_STALLS, HVX\_STALLS, bandwidth and spill/fill bytes). The prompt asks the model to produce: (i) a one-line summary of the degradation and (ii) a directional root-cause hint pointing at the most likely bottleneck. The output is appended as a new sheet of the per-regression workbook and is also included in the email summary.
+
+% IMAGE PLACEHOLDER: Insert a sequence diagram showing how the modules interact across one regression run.
+\begin{figure}[htb]
+\centering
+	\includegraphics[scale=1]{Figures/universe}
+	\caption{Module interaction across one regression run}
+	\label{fig:moduleseq}
+\end{figure}
+
+\subsection{Software / Hardware Stack}
+The complete software / hardware stack used to implement and execute the pipeline is:
+\begin{itemize}
+\item Python 3.
+\item Pandas, NumPy.
+\item Regular Expressions (\texttt{re} module).
+\item LLM API (GPT / Claude).
+\item CSV / Excel tools (\texttt{openpyxl}).
+\item Git for version control.
+\item Linux (Ubuntu / RHEL) as the development and deployment environment.
+\item Emulation platform as the source of all log files used by the system.
+\end{itemize}
 
 \vspace{0.75cm}
 
  \textbf{The chapters should not end with figures, instead bring the paragraph explaining about the figure at the end followed by a summary paragraph.}
 
-After elaborating the various sections of the chapter (From Chapter 2 onwards), a summary paragraph should be written discussing the highlights of that particular chapter. This summary paragraph should not be numbered separately. This paragraph should connect the present chapter to the next chapter. 
-
+In summary, this chapter has described the implementation of the proposed automated log analysis pipeline, covering the top-level Python module organization, the role of each module, and the software stack used during development. The next chapter presents the results obtained from running the pipeline on the reference test suite and discusses the inferences drawn from those results.

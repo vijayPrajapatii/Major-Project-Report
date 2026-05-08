@@ -18,3 +18,6 @@ MinorProjectReport.*
 !MinorProjectReport.tex
 CODE_OF_CONDUCT.md
 
+# Claude Code local state
+.claude/
+

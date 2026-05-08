@@ -1,84 +1,104 @@
-\chapter{Introduction to Analog and Digital converters}
-Every chapter should start with an introduction paragraph. This paragraph should brief about the flow of the chapter. This introduction can be limited within 4 to 5 sentences. The chapter heading should be appropriately modified (a sample heading is shown for this chapter). But don't start the introduction paragraph in the chapters like "This chapter deals with....". Instead you should bring in the highlights of the chapter in the introduction paragraph.
+\chapter{Introduction to AI-Based Automated Log Analysis}
+This chapter introduces the context of emulation-based pre-silicon validation and the role of log analysis in modern System-on-Chip (SoC) development. It highlights the limitations of manual log inspection, surveys recent literature on log parsing and anomaly detection, defines the motivation and the formal problem statement of the project, and lists the objectives. A brief outline of the proposed methodology and the organization of the report is also presented.
 
 \section[Introduction]{\textbf{Introduction}}
-The title of the project can be introduced in this section. This section should neatly elaborate the context of the project, the relevance of the area chosen and the title. You can bring a brief history and arrive at the title of the project. Use appropriate number of paragraphs within this section. 
+In modern semiconductor development, hardware and software are designed together (co-design) to ensure that system functionality and performance targets are met before the silicon is fabricated. Emulation platforms enable testing of system software even before the actual hardware is available, which is critical for catching bugs early and reducing the overall product development cycle. Multiple software test cases are executed on these emulation platforms, and each test generates detailed log files that capture the system behaviour and performance counters of interest.
 
-You are allowed to use figures or diagrams which can help in introducing the topic acknowledging the source. For example , if you are introducing a particular topic, an appropriate figure can be used. The figure should be referenced in the text as Figure. \ref{fig:universe} 
+These logs contain important metrics such as bandwidth, clock cycles, and instructions per second (IPS), along with workload-specific counters for HMX (matrix engine), HVX (vector engine), and the scalar core. They also contain information about stalls, memory pressure (spill/fill bytes), tiling, scheduling, and build/configuration parameters. These metrics are essential for performance evaluation, regression comparison and root-cause analysis. However, with more than one hundred logs generated per regression run, manual extraction and analysis of metrics becomes impractical.
+
+To overcome this limitation, the proposed system integrates LogPAI (using the Drain algorithm) for structured log parsing and LogAI for machine learning based analysis, along with an LLM-based module that produces high-level summaries and assists in root-cause analysis. The output is delivered as standardized per-regression workbooks, a final multi-option comparison workbook, dashboards and email alerts, so that the same analysis can be reproduced by any engineer in the core team.
+
+% IMAGE PLACEHOLDER: Insert a system overview block diagram (similar to the methodology flow shown in the PPT slides 14-17) here.
 \begin{figure}[htb]
 \centering
-	\includegraphics[scale=1]{Figures/universe}	
-	\caption{Sample picture of universe }
-	\label{fig:universe}
+	\includegraphics[scale=1]{Figures/universe}
+	\caption{Overview of the proposed AI-based automated log analysis pipeline}
+	\label{fig:overview}
 \end{figure}
 
-These guidelines are provided to formally expose you to the various ethical and technical issues involved in writing up your work and the format you are required to adhere to while submitting your project report.
+Figure \ref{fig:overview} captures the high-level data flow of the proposed system, starting from raw log generation on the emulation platform through structured parsing, metric extraction and analysis, and ending with report generation and notifications.
 
 \section[Literature Review]{\textbf{Literature Review}}
 
-A literature review is a text of a scholarly paper, which includes the current knowledge including substantive findings, as well as theoretical and methodological contributions to a particular topic. Literature reviews are secondary sources, and do not report new or original experimental work. Most often associated with academic-oriented literature, such reviews are found in academic journals, and are not to be confused with book reviews that may also appear in the same publication. Literature reviews are a basis for research in nearly every academic field . A narrow-scope literature review may be included as part of a peer-reviewed journal article presenting new research, serving to situate the current study within the body of the relevant literature and to provide context for the reader. In such a case, the review usually precedes the methodology and results sections of the work.
+A literature review is a scholarly survey of the current state of knowledge on a topic, including substantive findings as well as theoretical and methodological contributions. The literature on automated log analysis has expanded rapidly in the recent years, driven by the growing scale of system logs in cloud, telemetry and pre-silicon validation environments. This section surveys five recent papers that directly relate to the techniques used in this project.
 
 \subsection{Sample}
-The main types of literature reviews are: evaluative, exploratory, and instrumental. A fourth type, the systematic review, is often classified separately, but is essentially a literature review focused on a research question, trying to identify, appraise, select and synthesize all high-quality research evidence and arguments relevant to that question. A meta-analysis is typically a systematic review using statistical methods to effectively combine the data used on all selected studies to produce a more reliable result.
+Recent literature on log parsing and anomaly detection focuses on three broad themes: (i) semantic and LLM-driven parsing of unstructured logs, (ii) cross-system generalization of anomaly detection models, and (iii) scalable, low-latency parsing for online use. The summaries below capture the key findings from each paper and indicate how they motivate the design choices in this work.
+
 \subsubsection[Review types]{\textbf{Review types}}
 
-The main types of literature reviews are: evaluative, exploratory, and instrumental. A fourth type, the systematic review, is often classified separately, but is essentially a literature review focused on a research question, trying to identify, appraise, select and synthesize all high-quality research evidence and arguments relevant to that question. A meta-analysis is typically a systematic review using statistical methods to effectively combine the data used on all selected studies to produce a more reliable result.
+Zhang et al. (2025), in \textit{SemanticLog: Towards Effective and Efficient Large-Scale Semantic Log Parsing}, demonstrate that LLM-based semantic parsing improves both accuracy and efficiency of large-scale log analysis while preserving privacy. The paper motivates the use of semantic templates over purely regex-based parsers when the log corpus contains many heterogeneous formats.
 
+Liu et al. (2025), in \textit{LUK: Empowering Log Understanding With Expert Knowledge From Large Language Models}, show that incorporating LLM-derived expert knowledge significantly enhances downstream log understanding and analysis performance. This justifies the integration of an LLM-based summarization and root-cause analysis stage in the proposed pipeline.
 
 \subsubsection[Process and product]{\textbf{Process and product}}
 
-Distinguish between the process of reviewing the literature and a finished work or product known as a literature review. The process of reviewing the literature is often ongoing and informs many aspects of the empirical research project. All of the latest literature should inform a research project. Scholars need to be scanning the literature long after a formal literature review product appears to be completed.
+Wang et al. (2025), in \textit{LogDLR: Unsupervised Cross-System Log Anomaly Detection Through Domain-Invariant Latent Representation}, introduce domain-invariant representations that improve anomaly detection across different systems with varying log formats. The work is relevant because the emulation platform produces logs from several sub-systems with different formats but similar underlying performance semantics.
+
+Chen et al. (2025), in \textit{EPAS: Efficient Online Log Parsing via Asynchronous Scheduling} (IEEE ICDE), demonstrate that asynchronous scheduling of parsing tasks improves the speed and efficiency of log parsing in real-time systems. This is directly applicable to the automated regression workflow, where parsing latency is a key constraint.
 
 \subsubsection{\textbf{Page limitation}}
 
-A careful literature review is usually 15 to 30 pages and could be longer. The process of reviewing the literature requires different kinds of activities and ways of thinking and link the activities of doing a literature review with Benjamin Bloom’s revised taxonomy of the cognitive domain (ways of thinking: remembering, understanding, applying, analysing, evaluating, and creating).
+Li et al. (2025), in \textit{Practitioners' Expectations on Log Anomaly Detection} (IEEE Transactions on Software Engineering), highlight the gap between academic research and real-world industrial requirements in log anomaly detection systems. Their findings reinforce the need for tooling that produces interpretable, actionable summaries, rather than only raw model scores - which is one of the central design goals of this project.
 
-This section should contain the review of the literature in the past.You should review a minimum of 10 papers from standard reference journals. Kindly avoid local conference papers and papers from predatory journals. Kindly consult with your guide and finalize papers to be considered for review before adding in this section.Report the major observations and findings from each paper in one paragraph in the format given below.
-
-proposed various techniques for adders and multipliers.Add the reference papers to the bibliography section using Jabref and cite it here using the instructions given in further chapters.
-
+Together, these works provide the technical and practical foundation for the design of the proposed pipeline. They support the choice of the Drain algorithm (LogPAI) for template extraction, the use of LogAI for clustering and anomaly detection on parsed logs, and the integration of an LLM API for natural-language summarization and root-cause direction.
 
 \subsubsection{\textbf{Plagiarism}}
 
-To use someone else's exact words without quotation marks and appropriate credit, or to use the unique ideas of someone else without acknowledgement, is known as plagiarism. In publishing, plagiarism is illegal; in other circumstances, it is, at the least, unethical. You may quote or paraphrase the words or ideas of another if you document your source. Although you need not enclose the paraphrased material in quotation marks, you must document the source. 
-
-Paraphrased ideas are taken from someone else whether or not the words are identical. Paraphrasing a passage without citing the source is permissible only when the information paraphrased is common knowledge in a field. (Common knowledge refers to historical, scientific, geographical, technical, and other type of information on a topic readily available in handbooks, manuals, atlases and other references). 
+All concepts borrowed from these papers are referenced in the bibliography. Direct quotations from the papers have been avoided; the discussion paraphrases the original ideas while preserving their technical meaning, in line with standard academic practice.
 
 \subsubsection{How to add Reference}
-Use \texttt{Jabref} which will help in adding the reference in a separate file, from which one can use \verb|\citep\{\}| command to add reference. A sample, referring to a textbook would look something like this,\cite{Razavi2000}.
+The reference papers are managed using \texttt{Jabref} and cited with the \verb|\cite{}| command. A representative citation, for example to a textbook, would look like this \cite{Razavi2000}. The complete list of references is given at the end of the report.
 
 \section[Motivation]{\textbf{Motivation}}
 
-Brief the motivation of selecting your project title. You can elaborate the challenges in the specific area, relevance and importance of the chosen topic. 
+The motivation for this project comes directly from the daily challenges faced by the pre-silicon performance validation team. The key issues are:
+
+\begin{itemize}
+\item Manual analysis of a large number of test logs (typically more than 100 per regression run) is highly repetitive and consumes a significant fraction of an engineer's working day.
+\item Engineers spend more effort on extracting data from raw logs than on actual root-cause analysis and problem solving.
+\item Without an automated comparison framework, it is difficult to quickly determine whether an observed degradation is caused by hardware (architecture, clock frequency) or by software (compiler version, build flags).
+\item Lack of automated summarization delays communication of regression results to managers and to other cross-functional teams.
+\item Existing tools individually handle parsing, clustering or visualization, but none of them provide a unified hybrid AI-based pipeline that combines structured parsing, ML-based analysis and LLM-based reporting.
+\end{itemize}
+
+There is therefore a strong industrial need for an efficient, faster and reproducible debugging tool that can keep up with aggressive product development timelines.
 
 \section[Problem statement]{\textbf{Problem statement}}
 
-Define the problem statement in this section, in one paragraph.
+To overcome the slow and error-prone manual analysis of extensive log data generated from large-scale emulation tests, and to effectively identify performance issues and their root cause, an automated system is required for efficient log extraction, analysis and summarization that improves debugging and decision-making across the validation team.
 
 \section[Objectives]{\textbf{Objectives}}
-The objectives of the project are
+The objectives of the project are:
 \begin{enumerate}
-\item To design a pipelined ADC for audio frequency range
-\item List all the objectives in the above format , starting with "To"
-\item Limit the number of objectives to a maximum of three
+\item To replace manual log-grepping with a single automated pipeline that runs per regression and produces repeatable outputs for any engineer in the core team.
+\item To compress regression analysis time from several hours to approximately two minutes per regression by automating the extraction and formatting of results.
+\item To standardize customer-request reporting through per-regression three-sheet workbooks and a final multi-option comparison workbook (Cascade baseline vs. Nova-* variants), and to enable fast degradation detection and root-cause direction using automatically computed percentage differences and stall/bandwidth indicators such as HVX stalls and DMA-bound signals.
 \end{enumerate}
 
 \section[Brief Methodology of the project]{\textbf{Brief Methodology of the project}}
-Discuss about the methodology you identified to execute the objectives of your project in brief. Methodology is a system of practices, techniques, procedures, and rules used to execute a particular project. You can elaborate the methodology in a later chapter. Here you can present in the form of a flow diagram and explain the methodology in a paragraph.
+The methodology of this project is structured into four stages: data collection, log processing, analysis engine and output \& delivery. In the data collection stage, software test cases are executed on the emulation platform and raw log files are ingested and stored for offline processing. In the log processing stage, raw logs are pre-processed and parsed using LogPAI's Drain algorithm to produce structured log templates and feature vectors. The analysis engine combines LogAI-based machine learning (clustering and anomaly detection), regex-driven metric extraction (cycles, IPS, bandwidth, HMX/HVX/scalar counters, stalls) and an LLM-based stage for summary generation and root-cause analysis. The final stage produces CSV / XLSX reports, a dashboard view, and email/status notifications. The detailed methodology is presented in Chapter 3.
 
 \section[Assumptions made / Constraints of the project]{\textbf{Assumptions made / Constraints of the project}}
 
-List the assumptions made for the execution of the project in this section. You can also elaborate on the major constraints of the project. This section should clearly state under what conditions your project is valid. It is mandatory to have this section in your project report.
+The system is developed under the following assumptions and constraints:
+\begin{itemize}
+\item All log files follow the format produced by the in-house emulation platform; cross-vendor log formats are not in scope.
+\item The set of performance counters extracted (cycles, IPS, bandwidth, HMX/HVX/scalar counters, stalls, spill/fill bytes etc.) is fixed for the current release and matches the counters available on the platform under study.
+\item LLM-based summary and root-cause analysis is advisory in nature; final engineering decisions are taken by validation engineers after reviewing the structured workbooks.
+\item The pipeline is validated on a fixed test suite of twelve representative graphs and on six silicon configurations (one Cascade baseline plus five Nova variants).
+\item Network access to the LLM API is assumed to be available within the development environment.
+\end{itemize}
 
 \section[Organization of the report]{\textbf{Organization of the report}}
 
-This report is organized as follows. Write the discussions in each chapter. A sample is as follows.
+This report is organized as follows.
 \begin{itemize}
-\item Chapter 2 discusses the fundamentals of ADC and the performance parameters for evaluation.
-\item Chapter 3 discusses .
-\item Chapter 4 discusses .
-\item Chapter 5 discusses .
-\item Chapter 6 discusses .
+\item Chapter 2 discusses the theoretical background, including emulation-based pre-silicon validation, log parsing using the Drain algorithm (LogPAI), LogAI-based ML analysis, and the use of LLMs for log summarization, along with the software tools used in the project.
+\item Chapter 3 presents the detailed analysis and design of the proposed system, covering data collection, log processing, the analysis engine, output \& delivery, and the list of performance parameters extracted from each log.
+\item Chapter 4 describes the implementation of the pipeline, including the Python-based modules for log ingestion, regex extraction, structured workbook generation, comparison engine and LLM integration.
+\item Chapter 5 presents the results obtained, including the degradation summary across all six options, the IPS comparison of Nova-Alpha vs.\ Cascade, and a detailed root-cause analysis of MosaicNet\_W8A8.
+\item Chapter 6 concludes the report and outlines possible directions for future work, along with the learning outcomes from the project.
 \end{itemize}
 
 .

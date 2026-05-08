@@ -1,41 +1,56 @@
-\chapter{Theory and Fundamentals of Analog to Digital converter}
+\chapter{Theory and Fundamentals of Automated Log Analysis}
 
-Every chapter should start with an introduction paragraph. This paragraph should brief about the flow of the chapter. This introduction can be limited within 4 to 5 sentences. The chapter heading should be appropriately modified (a sample heading is shown for this chapter). But don't start the introduction paragraph in the chapters 2 to end with "This chapter deals with....". Instead you should bring in the highlights of the chapter in the introduction paragraph.
+This chapter presents the theoretical background and the prerequisite concepts that are essential for the execution of the project. It introduces emulation-based pre-silicon validation, the structure of log data produced by the platform, and the algorithmic foundations of log parsing, machine-learning based log analysis, and LLM-assisted summarization. It also covers the programming language and the supporting tools that are used to implement the pipeline.
 
 \section{Contents of this chapter}
 
-This chapter should discuss about the prerequisite learnings before the execution of the project. Organise and elaborate the theory and necessary fundamentals required for the execution of the project. You can use \verb|\subsections| and \verb|subsubsections| in this chapter.
+The first part of this chapter covers the prerequisite learnings that are required before the execution of the project. The discussion is organized as follows. First, the role of emulation-based pre-silicon validation is explained, including how software test cases are run on the emulation platform and how performance counters are exposed via log files. Second, the structure of a typical log line is described, along with the categories of metrics that are of interest (throughput, memory, HMX/HVX workloads, stalls, scalar activity, scheduling and configuration parameters). Third, the Drain algorithm used by LogPAI is introduced, which extracts log templates by building a fixed-depth parse tree on the constant tokens of each log line. Fourth, the LogAI framework is introduced, which builds on top of structured logs to perform clustering and unsupervised anomaly detection. Finally, the use of LLMs for natural-language summary generation and root-cause analysis is discussed, along with the prompting strategy used in this project.
+
 \section{Contents of this chapter}
-If a specific programming language is required for the project, a section can be allotted in this chapter to discuss it. 
+The second part of this chapter discusses the programming language used for the project. The pipeline is implemented in Python 3, which provides a rich ecosystem for data processing and machine learning. The Pandas library is used for tabular manipulation and CSV/XLSX I/O, NumPy is used for numerical operations on the extracted metrics, and Python's \texttt{re} module is used for regular-expression based extraction of counters from log lines. The \texttt{openpyxl} library is used internally by Pandas to write multi-sheet Excel workbooks, which is the standard delivery format expected by the validation team. The implementation also uses the LLM provider's Python SDK (GPT/Claude API) to obtain summaries and root-cause hints.
+
 \section{Contents of this chapter}
-Tools used could be another possible section to discuss about the software tools used in the work. 
+The third part of this chapter discusses the software tools used in the work. In addition to Python and the libraries above, the project makes use of:
+\begin{itemize}
+\item LogPAI (Drain) - for structured log parsing and template extraction.
+\item LogAI - for ML-based clustering and anomaly detection on parsed logs.
+\item LLM API (GPT / Claude) - for summary generation and root-cause analysis.
+\item Pandas, NumPy and Python regular expressions - for metric extraction and data manipulation.
+\item CSV / Excel tools (openpyxl) - for generating per-regression three-sheet workbooks and the final multi-option comparison workbook.
+\item Git - for source control.
+\item Linux (Ubuntu / RHEL) - as the development and deployment environment.
+\item Emulation platform - which serves as the source of all log files used by the system.
+\end{itemize}
+
 \section{Contents of this chapter}
-The details in this chapter can be added in consultation with the project guide. For an internship based projects, subsections can be modified accordingly. 
+The final part of this chapter discusses the project-specific details that have been agreed upon with the project guide. Since the project is internship-based, the underlying emulation infrastructure and the exact log format are organization-confidential, and only the high-level structure is presented in the report. The set of performance counters considered for analysis is also fixed in consultation with the external guide and is summarized in Chapter 3.
+
+% IMAGE PLACEHOLDER: A representative log snippet (anonymized) and the corresponding parsed template can be added here as a figure.
 
 \section{Use of Acronyms and Glossaries}
-Acronyms are nothing but the short form of regular repeated word. Say for example, you have a repeat word "Integrated Circuits" and you want to use a short form for it as "IC". For which you have to first define the word and use it wherever you wanted to refer it.
+Acronyms are short forms of regularly repeated technical terms. For example, instead of repeatedly writing ``Integrated Circuits'', one defines a short form ``IC'' once and uses it throughout the report. Acronyms are first defined in the file \texttt{Glossaries.tex} under the \texttt{AuxFiles} directory and are then expanded automatically by the glossaries package on first use.
 
-First, let's look at the definition, which has to be entered in \texttt{Glossaries.tex} under \texttt{CoverPages} directory.
+The format used for acronym definitions is shown below.
 \begin{verbatim}
 %\newacronym{<Ref>}{<Short-Form>}{<Expanded word>}
 \newacronym{ic}{IC}{Integrated Circuits}
 \end{verbatim}
-In order to use the defined acronym, use the commands \verb|\gls{<Ref>}| as shown below
+In order to use a defined acronym, the command \verb|\gls{<Ref>}| is used.
 
-As an example, call the definition with \verb|\gls{ic}| and the outcome of it is reflected as, \gls{ic}.
+As an example, calling \verb|\gls{ic}| produces the following output: \gls{ic}.
 
-Note: For the First time, the expanded form appears along with the Short-form definition inside parenthesis. But when the \verb|\gls{}| is repeated, only Short-form appears inside the parenthesis.
+Note: For the first time, the expanded form appears along with the short-form definition inside parentheses. From the second use onwards, only the short-form appears.
 
-Now, let's look at the definition of symbols. Follow the syntax to define the symbol first, inside \texttt{Glossaries.tex} under \texttt{CoverPages} directory.
+Symbols are similarly defined in \texttt{Glossaries.tex}. The format is:
 \begin{verbatim}
-%\newglossaryentry{<Ref>}{name=<Symbol>, description={<description about the symbol>}, type=<List type>}
+%\newglossaryentry{<Ref>}{name=<Symbol>, description={<description>}, type=<List type>}
 \newglossaryentry{rc}{name=$\tau$, description={Time constant}, type=symbolList}
 \end{verbatim}
 
-As an example, the rate of change is defined with \verb|\gls{rc}| and the outcome of it is reflected as, the rate of change is defined with \gls{rc}.
+As an example, the rate of change is defined with \verb|\gls{rc}| and the outcome is reflected as: the rate of change is defined with \gls{rc}.
 
 \vspace{0.75cm}
 
  \textbf{The chapters should not end with figures, instead bring the paragraph explaining about the figure at the end followed by a summary paragraph.}
 
-After elaborating the various sections of the chapter (From Chapter 2 onwards), a summary paragraph should be written discussing the highlights of that particular chapter. This summary paragraph should not be numbered separately. This paragraph should connect the present chapter to the next chapter.
+In summary, this chapter has presented the prerequisite background needed to understand the proposed system: the role of emulation-based pre-silicon validation, the structure of the log data, the Drain algorithm used by LogPAI for structured log parsing, the use of LogAI for ML-based clustering and anomaly detection, and the integration of an LLM API for natural-language summarization and root-cause analysis. The next chapter builds on this background and presents the detailed analysis and design of the proposed automated log analysis pipeline.
