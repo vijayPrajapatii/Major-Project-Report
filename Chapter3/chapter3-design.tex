@@ -117,7 +117,7 @@ The set of performance parameters extracted from each log is summarized in Table
 \begin{table}[htb]
 \fontsize{10}{12}\selectfont
 \centering
-\caption{Performance parameters extracted from logs (Part 1 - throughput, memory, HMX/HVX, stalls, scalar)}
+\caption{Performance parameters extracted from logs (Part 1 - throughput, memory, Coproc\_1/Coproc\_2, stalls, scalar)}
 \label{tab:params1}
 \begin{tabular}{|p{4cm}|p{3.5cm}|p{6cm}|}
 \hline
@@ -126,10 +126,10 @@ The set of performance parameters extracted from each log is summarized in Table
 cycles & Throughput & Total clock cycles per inference\\\hline
 IPS & Throughput & Inferences per second\\\hline
 bandwidth (MB) & Memory System & Total DDR read + write traffic\\\hline
-HMX\_MAC / HMX\_CVT & HMX Workload & HMX matrix / convert work packets\\\hline
-HVX\_PKT & HVX Workload & HVX vector work packets\\\hline
-HMX\_STALLS & Stall Analysis & HMX idle cycles (not doing useful work)\\\hline
-HVX\_STALLS & Stall Analysis & HVX idle cycles\\\hline
+Coproc\_1\_MAC / Coproc\_1\_CVT & Coproc\_1 Workload & Coproc\_1 matrix / convert work packets\\\hline
+Coproc\_2\_PKT & Coproc\_2 Workload & Coproc\_2 vector work packets\\\hline
+Coproc\_1\_STALLS & Stall Analysis & Coproc\_1 idle cycles (not doing useful work)\\\hline
+Coproc\_2\_STALLS & Stall Analysis & Coproc\_2 idle cycles\\\hline
 SCALAR & Scalar Activity & Aggregate scalar-core activity (PVIEW counter sum)\\
 \hline
 \end{tabular}
@@ -146,7 +146,7 @@ SCALAR & Scalar Activity & Aggregate scalar-core activity (PVIEW counter sum)\\
 \hline
 selected\_sequencer & Scheduling & Compiler-chosen execution schedule\\\hline
 spill\_bytes / fill\_bytes & Memory Pressure & VTCM overflow traffic to DDR\\\hline
-hmx\_parallelism / hvx\_parallelism & multi\_calc & Average parallelism factor\\\hline
+coproc\_1\_parallelism / coproc\_2\_parallelism & multi\_calc & Average parallelism factor\\\hline
 tiling\_shape & Tiling & Most frequent tile shape used\\\hline
 cp\_gt5\_optypes & Ops & Ops contributing $>5$\% of inference time\\\hline
 hexnn\_sha & Build/Version & Compiler version identifier (commit)\\\hline

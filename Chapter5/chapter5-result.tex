@@ -95,9 +95,9 @@ The per-graph IPS percentage difference of Nova-Alpha relative to Cascade is sho
 \end{figure}
 
 \subsection{Root-Cause Analysis: MosaicNet\_W8A8}
-MosaicNet\_W8A8 is the worst-degraded test on Nova-Alpha. To isolate the cause, the IPS and the percentage difference of HMX\_STALLS and HVX\_STALLS were compared across Cascade (787 MHz), Nova-Alpha (787 MHz) and Nova-Gamma (1037 MHz). The IPS values observed were 487.7, 370.4 and 459.5 respectively, corresponding to $-24.1\%$ on Nova-Alpha and $-5.8\%$ on Nova-Gamma relative to Cascade. The HVX\_STALLS percentage difference was $-113\%$ on both Nova-Alpha and Nova-Gamma, while HMX\_STALLS percentage difference was approximately $+54\%$ to $+55\%$ (an improvement) on the Nova variants.
+MosaicNet\_W8A8 is the worst-degraded test on Nova-Alpha. To isolate the cause, the IPS and the percentage difference of Coproc\_1\_STALLS and Coproc\_2\_STALLS were compared across Cascade (787 MHz), Nova-Alpha (787 MHz) and Nova-Gamma (1037 MHz). The IPS values observed were 487.7, 370.4 and 459.5 respectively, corresponding to $-24.1\%$ on Nova-Alpha and $-5.8\%$ on Nova-Gamma relative to Cascade. The Coproc\_2\_STALLS percentage difference was $-113\%$ on both Nova-Alpha and Nova-Gamma, while Coproc\_1\_STALLS percentage difference was approximately $+54\%$ to $+55\%$ (an improvement) on the Nova variants.
 
-% IMAGE PLACEHOLDER: Insert the dual-panel chart from PPT slide 25 (top: IPS bar chart for Cascade / Nova-Alpha / Nova-Gamma; bottom: HMX_STALLS and HVX_STALLS percent difference) here.
+% IMAGE PLACEHOLDER: Insert the dual-panel chart from PPT slide 25 (top: IPS bar chart for Cascade / Nova-Alpha / Nova-Gamma; bottom: Coproc\_1_STALLS and Coproc\_2_STALLS percent difference) here.
 \begin{figure}[htb]
 \centering
 	\includegraphics[scale=1]{Figures/universe}
@@ -130,10 +130,10 @@ The IPS speed-up of Nova-Gamma over Nova-Alpha is given by Eqn.\ \ref{eqn:speedu
 \section{Interpretation of results}
 The interpretation of the results presented above is summarized as follows.
 \begin{itemize}
-\item At 787 MHz (Nova-Alpha), HVX stalls explode (\(-113\%\)) -- HVX is severely starved.
-\item At 1037 MHz (Nova-Gamma), HVX stalls remain similar in absolute terms but the higher clock compensates, and IPS recovers from \(-24.1\%\) to \(-5.8\%\).
-\item HMX stalls actually improve on Nova (fewer HMX stall cycles), confirming that HMX is not the bottleneck on this graph.
-\item The remaining \(-5.8\%\) at 1037 MHz is due to HVX stalls that the higher clock cannot fully compensate, pointing engineers towards the HVX scheduling path as the next investigation step.
+\item At 787 MHz (Nova-Alpha), Coproc\_2 stalls explode (\(-113\%\)) -- Coproc\_2 is severely starved.
+\item At 1037 MHz (Nova-Gamma), Coproc\_2 stalls remain similar in absolute terms but the higher clock compensates, and IPS recovers from \(-24.1\%\) to \(-5.8\%\).
+\item Coproc\_1 stalls actually improve on Nova (fewer Coproc\_1 stall cycles), confirming that Coproc\_1 is not the bottleneck on this graph.
+\item The remaining \(-5.8\%\) at 1037 MHz is due to Coproc\_2 stalls that the higher clock cannot fully compensate, pointing engineers towards the Coproc\_2 scheduling path as the next investigation step.
 \item Across the full test suite, higher clock frequency configurations (Nova-Delta and Nova-Epsilon at 1037 MHz) reduce degradations to a single test, confirming that frequency-driven configurations are preferable for the workloads in scope.
 \end{itemize}
 

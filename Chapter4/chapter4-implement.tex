@@ -15,7 +15,7 @@ The pipeline is organized as a set of cooperating Python modules, each responsib
 \item \texttt{ingest.py} - walks the regression directory, locates per-graph log files for each option under test, and validates that all expected files are present.
 \item \texttt{preprocess.py} - performs textual normalization on raw log lines (timestamp stripping, whitespace normalization).
 \item \texttt{parse.py} - invokes LogPAI's Drain parser to produce structured templates and a parsed CSV per log.
-\item \texttt{extract.py} - applies a curated set of regular expressions to extract the performance counters listed in Chapter 3 (cycles, IPS, bandwidth, HMX/HVX/scalar counters, stalls, spill/fill bytes etc.) and emits a per-graph metrics record.
+\item \texttt{extract.py} - applies a curated set of regular expressions to extract the performance counters listed in Chapter 3 (cycles, IPS, bandwidth, Coproc\_1/Coproc\_2/scalar counters, stalls, spill/fill bytes etc.) and emits a per-graph metrics record.
 \item \texttt{analyze.py} - performs LogAI-based clustering and anomaly detection on the parsed structured logs, and merges the results with the extracted metrics record.
 \item \texttt{compare.py} - performs the baseline-vs-options comparison, computes per-metric percentage differences, and flags degraded tests according to the IPS threshold.
 \item \texttt{report.py} - produces the per-regression three-sheet workbook (raw, derived, summary) and the final multi-option comparison workbook.
@@ -38,7 +38,7 @@ The metric extraction module uses a curated dictionary of regular expressions, o
 The comparison engine reads the per-option DataFrames and computes the percentage difference of every metric against the Cascade baseline using Eqn.\ \ref{eqn:pctdiff} from Chapter 3. The result is reshaped into a two-dimensional table with one row per graph and one column per (metric, option) pair, which becomes the third sheet of the per-regression workbook.
 
 \subsection{LLM-based Summary and Root-Cause Analysis}
-For each test that is flagged as degraded, the LLM module assembles a compact prompt containing the metrics that differ most from the baseline (typically IPS, HMX\_STALLS, HVX\_STALLS, bandwidth and spill/fill bytes). The prompt asks the model to produce: (i) a one-line summary of the degradation and (ii) a directional root-cause hint pointing at the most likely bottleneck. The output is appended as a new sheet of the per-regression workbook and is also included in the email summary.
+For each test that is flagged as degraded, the LLM module assembles a compact prompt containing the metrics that differ most from the baseline (typically IPS, Coproc\_1\_STALLS, Coproc\_2\_STALLS, bandwidth and spill/fill bytes). The prompt asks the model to produce: (i) a one-line summary of the degradation and (ii) a directional root-cause hint pointing at the most likely bottleneck. The output is appended as a new sheet of the per-regression workbook and is also included in the email summary.
 
 % IMAGE PLACEHOLDER: Insert a sequence diagram showing how the modules interact across one regression run.
 \begin{figure}[htb]
