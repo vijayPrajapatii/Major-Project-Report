@@ -34,10 +34,9 @@ The design methodology consists of four stages that are executed in sequence per
 \subsubsection{Stage 1 - Data Collection}
 The data collection stage begins with the execution of software test cases on the emulation platform. The platform produces raw log files for each test, which are then collected and stored in a structured directory tree (one directory per option under test, containing one log file per graph). Once all logs are present, the stage signals \textit{Log Data Ready} for the next stage.
 
-% IMAGE PLACEHOLDER: Insert flow diagram from PPT slide 14 (Data Collection: Test Execution -> Log Generation -> Log Ingestion -> Log Data Ready).
 \begin{figure}[htb]
 \centering
-	\includegraphics[scale=1]{Figures/universe}
+	\includegraphics[width=0.9\textwidth]{Figures/fig1}
 	\caption{Data collection stage of the proposed pipeline}
 	\label{fig:datacoll}
 \end{figure}
@@ -45,10 +44,9 @@ The data collection stage begins with the execution of software test cases on th
 \subsubsection{Stage 2 - Log Processing}
 The log processing stage takes the raw log files as input and produces structured logs and feature vectors. It consists of three parallel paths: a preprocessing path that normalizes and cleans the raw text, a parsing path that uses LogPAI's Drain algorithm to extract templates, and a feature extraction path that builds numeric feature vectors for downstream ML.
 
-% IMAGE PLACEHOLDER: Insert flow diagram from PPT slide 15 (Log Processing: Preprocessing, Log Parsing (LogPAI - Drain), Feature Extraction -> Structured Logs / Feature Vectors).
 \begin{figure}[htb]
 \centering
-	\includegraphics[scale=1]{Figures/universe}
+	\includegraphics[width=0.7\textwidth]{Figures/fig2}
 	\caption{Log processing stage of the proposed pipeline}
 	\label{fig:logproc}
 \end{figure}
@@ -56,10 +54,9 @@ The log processing stage takes the raw log files as input and produces structure
 \subsubsection{Stage 3 - Analysis Engine}
 The analysis engine consumes the structured logs and feature vectors. It is composed of three sub-modules executing in parallel: a Log Analysis sub-module (LogAI) that performs clustering and anomaly detection; a Metric Extraction sub-module that pulls bandwidth, clock cycles, IPS, pass/fail status and a regression comparison block (baseline vs.\ options) that produces a degradation summary in terms of percentage difference and counts; and an LLM Analysis sub-module that performs summary generation and root-cause analysis.
 
-% IMAGE PLACEHOLDER: Insert flow diagram from PPT slide 16 (Analysis Engine: Log Analysis (LogAI - ML), Metric Extraction, LLM Analysis).
 \begin{figure}[htb]
 \centering
-	\includegraphics[scale=1]{Figures/universe}
+	\includegraphics[width=\textwidth]{Figures/fig3}
 	\caption{Analysis engine of the proposed pipeline}
 	\label{fig:analysisengine}
 \end{figure}
@@ -67,10 +64,9 @@ The analysis engine consumes the structured logs and feature vectors. It is comp
 \subsubsection{Stage 4 - Output and Delivery}
 The output \& delivery stage takes the clustering / anomaly results, the degradation summary and the LLM summary / root-cause analysis, and produces two artifacts: a Report Generation path that writes CSV and XLSX reports and a dashboard, and a Notification System path that produces email alerts and status updates. Once the artifacts are produced, the regression flow ends.
 
-% IMAGE PLACEHOLDER: Insert flow diagram from PPT slide 17 (Output and Delivery: Report Generation, Notification System).
 \begin{figure}[htb]
 \centering
-	\includegraphics[scale=1]{Figures/universe}
+	\includegraphics[width=0.85\textwidth]{Figures/fig4}
 	\caption{Output and delivery stage of the proposed pipeline}
 	\label{fig:output}
 \end{figure}
