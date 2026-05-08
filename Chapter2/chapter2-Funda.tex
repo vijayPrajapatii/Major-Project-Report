@@ -2,15 +2,15 @@
 
 This chapter presents the theoretical background and the prerequisite concepts that are essential for the execution of the project. It introduces emulation-based pre-silicon validation, the structure of log data produced by the platform, and the algorithmic foundations of log parsing, machine-learning based log analysis, and LLM-assisted summarization. It also covers the programming language and the supporting tools that are used to implement the pipeline.
 
-\section{Contents of this chapter}
+\section{Theoretical Background}
 
-The first part of this chapter covers the prerequisite learnings that are required before the execution of the project. The discussion is organized as follows. First, the role of emulation-based pre-silicon validation is explained, including how software test cases are run on the emulation platform and how performance counters are exposed via log files. Second, the structure of a typical log line is described, along with the categories of metrics that are of interest (throughput, memory, Coproc\_1/Coproc\_2 workloads, stalls, scalar activity, scheduling and configuration parameters). Third, the Drain algorithm used by LogPAI is introduced, which extracts log templates by building a fixed-depth parse tree on the constant tokens of each log line. Fourth, the LogAI framework is introduced, which builds on top of structured logs to perform clustering and unsupervised anomaly detection. Finally, the use of LLMs for natural-language summary generation and root-cause analysis is discussed, along with the prompting strategy used in this project.
+This section covers the prerequisite learnings that are required before the execution of the project. The discussion is organized as follows. First, the role of emulation-based pre-silicon validation is explained, including how software test cases are run on the emulation platform and how performance counters are exposed via log files. Second, the structure of a typical log line is described, along with the categories of metrics that are of interest (throughput, memory, Coproc\_1/Coproc\_2 workloads, stalls, scalar activity, scheduling and configuration parameters). Third, the Drain algorithm used by LogPAI is introduced, which extracts log templates by building a fixed-depth parse tree on the constant tokens of each log line. Fourth, the LogAI framework is introduced, which builds on top of structured logs to perform clustering and unsupervised anomaly detection. Finally, the use of LLMs for natural-language summary generation and root-cause analysis is discussed, along with the prompting strategy used in this project.
 
-\section{Contents of this chapter}
-The second part of this chapter discusses the programming language used for the project. The pipeline is implemented in Python 3, which provides a rich ecosystem for data processing and machine learning. The Pandas library is used for tabular manipulation and CSV/XLSX I/O, NumPy is used for numerical operations on the extracted metrics, and Python's \texttt{re} module is used for regular-expression based extraction of counters from log lines. The \texttt{openpyxl} library is used internally by Pandas to write multi-sheet Excel workbooks, which is the standard delivery format expected by the validation team. The implementation also uses the LLM provider's Python SDK (GPT/Claude API) to obtain summaries and root-cause hints.
+\section{Programming Language}
+This section discusses the programming language used for the project. The pipeline is implemented in Python 3, which provides a rich ecosystem for data processing and machine learning. The Pandas library is used for tabular manipulation and CSV/XLSX I/O, NumPy is used for numerical operations on the extracted metrics, and Python's \texttt{re} module is used for regular-expression based extraction of counters from log lines. The \texttt{openpyxl} library is used internally by Pandas to write multi-sheet Excel workbooks, which is the standard delivery format expected by the validation team. The implementation also uses the LLM provider's Python SDK (GPT/Claude API) to obtain summaries and root-cause hints.
 
-\section{Contents of this chapter}
-The third part of this chapter discusses the software tools used in the work. In addition to Python and the libraries above, the project makes use of:
+\section{Software Tools Used}
+This section discusses the software tools used in the work. In addition to Python and the libraries above, the project makes use of:
 \begin{itemize}
 \item LogPAI (Drain) - for structured log parsing and template extraction.
 \item LogAI - for ML-based clustering and anomaly detection on parsed logs.
@@ -22,8 +22,8 @@ The third part of this chapter discusses the software tools used in the work. In
 \item Emulation platform - which serves as the source of all log files used by the system.
 \end{itemize}
 
-\section{Contents of this chapter}
-The final part of this chapter discusses the project-specific details that have been agreed upon with the project guide. Since the project is internship-based, the underlying emulation infrastructure and the exact log format are organization-confidential, and only the high-level structure is presented in the report. The set of performance counters considered for analysis is also fixed in consultation with the external guide and is summarized in Chapter 3.
+\section{Project-Specific Configuration}
+This section discusses the project-specific details that have been agreed upon with the project guide. Since the project is internship-based, the underlying emulation infrastructure and the exact log format are organization-confidential, and only the high-level structure is presented in the report. The set of performance counters considered for analysis is also fixed in consultation with the external guide and is summarized in Chapter 3.
 
 % IMAGE PLACEHOLDER: A representative log snippet (anonymized) and the corresponding parsed template can be added here as a figure.
 
