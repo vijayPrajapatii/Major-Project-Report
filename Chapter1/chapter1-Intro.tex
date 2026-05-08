@@ -6,17 +6,7 @@ In modern semiconductor development, hardware and software are designed together
 
 These logs contain important metrics such as bandwidth, clock cycles, and instructions per second (IPS), along with workload-specific counters for Coproc\_1 (matrix engine), Coproc\_2 (vector engine), and the scalar core. They also contain information about stalls, memory pressure (spill/fill bytes), tiling, scheduling, and build/configuration parameters. These metrics are essential for performance evaluation, regression comparison and root-cause analysis. However, with more than one hundred logs generated per regression run, manual extraction and analysis of metrics becomes impractical.
 
-To overcome this limitation, the proposed system integrates LogPAI (using the Drain algorithm) for structured log parsing and LogAI for machine learning based analysis, along with an LLM-based module that produces high-level summaries and assists in root-cause analysis. The output is delivered as standardized per-regression workbooks, a final multi-option comparison workbook, dashboards and email alerts, so that the same analysis can be reproduced by any engineer in the core team.
-
-% IMAGE PLACEHOLDER: Insert a system overview block diagram (similar to the methodology flow shown in the PPT slides 14-17) here.
-\begin{figure}[htb]
-\centering
-	\includegraphics[scale=1]{Figures/universe}
-	\caption{Overview of the proposed AI-based automated log analysis pipeline}
-	\label{fig:overview}
-\end{figure}
-
-Figure \ref{fig:overview} captures the high-level data flow of the proposed system, starting from raw log generation on the emulation platform through structured parsing, metric extraction and analysis, and ending with report generation and notifications.
+To overcome this limitation, the proposed system integrates LogPAI (using the Drain algorithm) for structured log parsing and LogAI for machine learning based analysis, along with an LLM-based module that produces high-level summaries and assists in root-cause analysis. The output is delivered as standardized per-regression workbooks, a final multi-option comparison workbook, dashboards and email alerts, so that the same analysis can be reproduced by any engineer in the core team. The high-level data flow of the proposed system starts from raw log generation on the emulation platform, proceeds through structured parsing, metric extraction and analysis, and ends with report generation and notifications. The detailed four-stage methodology is presented in Chapter 3.
 
 \section[Literature Review]{\textbf{Literature Review}}
 

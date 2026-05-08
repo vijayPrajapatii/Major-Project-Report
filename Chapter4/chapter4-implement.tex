@@ -40,14 +40,6 @@ The comparison engine reads the per-option DataFrames and computes the percentag
 \subsection{LLM-based Summary and Root-Cause Analysis}
 For each test that is flagged as degraded, the LLM module assembles a compact prompt containing the metrics that differ most from the baseline (typically IPS, Coproc\_1\_STALLS, Coproc\_2\_STALLS, bandwidth and spill/fill bytes). The prompt asks the model to produce: (i) a one-line summary of the degradation and (ii) a directional root-cause hint pointing at the most likely bottleneck. The output is appended as a new sheet of the per-regression workbook and is also included in the email summary.
 
-% IMAGE PLACEHOLDER: Insert a sequence diagram showing how the modules interact across one regression run.
-\begin{figure}[htb]
-\centering
-	\includegraphics[scale=1]{Figures/universe}
-	\caption{Module interaction across one regression run}
-	\label{fig:moduleseq}
-\end{figure}
-
 \subsection{Software / Hardware Stack}
 The complete software / hardware stack used to implement and execute the pipeline is:
 \begin{itemize}
