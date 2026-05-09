@@ -1,34 +1,80 @@
 \chapter{Code}
-\section{First Appendix}
-You can use \texttt{tcblisting} for creating the code snippets. The following example illustrates how one can customize the \texttt{tcblisting} to achieve the \texttt{tcl} script. Similarly, one can use it for other programming language listing, including HDL.
+\section{Metric Extraction Module}
+This appendix presents a representative source listing from the pipeline implementation discussed in Chapter 4. The module shown below is \texttt{extract.py}, which is responsible for pulling deterministic performance counters out of a single raw log file and emitting them as a Pandas-friendly dictionary. Each regular expression in the \texttt{COUNTER\_PATTERNS} dictionary corresponds to one row of the parameter tables in Chapter 3 (Tables 3.2 and 3.3), so this module is the direct realization of the metric set documented earlier.
+
+The function \texttt{extract\_metrics} reads the log file, applies every regular expression in turn, and stores the first numeric match for each counter. Counters that do not appear in a particular log are reported as \texttt{None} so that downstream comparison logic can distinguish ``not present'' from ``present and zero''. The returned dictionary is consumed by \texttt{compare.py}, which computes the percentage difference of every metric against the Cascade baseline using Equation 3.1 from Chapter 3.
 
 \begin{tcblisting}{listing only,colback=gray!10!white, breakable, boxsep=0pt,top=1mm,bottom=1mm,left=1mm,right=1mm,
 listing options={
-language= tcl,
-basicstyle=\small\ttfamily, 
-otherkeywords={create_clock, set_clock_latency, set_input_delay, set_output_delay, set_load, set_max_fanout, set_fanout_load},
-keywordstyle=\color{blue}, 
-%keywordstyle=[2]{\color{red}},
+language= Python,
+basicstyle=\small\ttfamily,
+keywordstyle=\color{blue},
 commentstyle=\color{gray},
+stringstyle=\color{violet},
 backgroundcolor=\color{gray!25},
-%morekeywords=[2]{arg,pos},
-%moredelim=[is][\color{violet}]{''}{''},
+showstringspaces=false,
 escapechar=!}}
-# Since our design has a clock with name clk, 
-## specify that name under [get_port ]
-create_clock -period 40 -waveform {0 20} [get_ports clk]
+"""extract.py - regex-driven metric extraction for one regression log."""
 
-# Setting a 'delay' on the clock:
-set_clock_latency 0.3 clk
+import re
+from pathlib import Path
 
-# Setting up constraints on your I/P and O/P pins
-set_input_delay 2.0 -clock clk [all_inputs]!\tikz[remember picture]\node[](c1){};!
-set_output_delay 1.65 -clock clk [all_outputs]!\tikz[remember picture]\node[](c2){};!
+# Each entry maps a canonical metric name to a regex that captures
+# its numeric value from the raw log file. The patterns are anchored
+# to the surrounding banner text so the match is unambiguous.
+COUNTER_PATTERNS = {
+    "cycles":              r"Total cycles\s*[:=]\s*(\d+)",
+    "IPS":                 r"IPS\s*[:=]\s*([\d.]+)",
+    "bandwidth_MB":        r"Bandwidth\s*\(MB\)\s*[:=]\s*([\d.]+)",
+    "Coproc_1_MAC":        r"COPROC_1_MAC\s*[:=]\s*(\d+)",
+    "Coproc_1_CVT":        r"COPROC_1_CVT\s*[:=]\s*(\d+)",
+    "Coproc_2_PKT":        r"COPROC_2_PKT\s*[:=]\s*(\d+)",
+    "Coproc_1_STALLS":     r"COPROC_1_STALLS\s*[:=]\s*(\d+)",
+    "Coproc_2_STALLS":     r"COPROC_2_STALLS\s*[:=]\s*(\d+)",
+    "SCALAR":              r"SCALAR\s*[:=]\s*(\d+)",
+    "spill_bytes":         r"spill_bytes\s*[:=]\s*(\d+)",
+    "fill_bytes":          r"fill_bytes\s*[:=]\s*(\d+)",
+    "selected_sequencer":  r"selected_sequencer\s*[:=]\s*(\S+)",
+    "tiling_shape":        r"tiling_shape\s*[:=]\s*(\S+)",
+    "hexnn_sha":           r"hexnn_sha\s*[:=]\s*([0-9a-f]+)",
+}
 
-# Set realistic 'loads' on each output pin
-set_load 0.1 [all_outputs]
+NUMERIC_KEYS = {
+    "cycles", "IPS", "bandwidth_MB",
+    "Coproc_1_MAC", "Coproc_1_CVT", "Coproc_2_PKT",
+    "Coproc_1_STALLS", "Coproc_2_STALLS",
+    "SCALAR", "spill_bytes", "fill_bytes",
+}
 
-# Set 'maximum' fanin and fan-out for the input and output pins 
-set_max_fanout 1 [all_inputs]
-set_fanout_load 8 [all_outputs]      
+
+def extract_metrics(log_path: Path) -> dict:
+    """Read one log file and return its metrics as a dictionary.
+
+    Counters that do not appear in the log are returned as None so
+    that downstream comparison can distinguish absent from zero.
+    """
+    text = Path(log_path).read_text(errors="ignore")
+    out = {"graph": Path(log_path).stem}
+
+    for name, pattern in COUNTER_PATTERNS.items():
+        match = re.search(pattern, text)
+        if match is None:
+            out[name] = None
+            continue
+        value = match.group(1)
+        if name in NUMERIC_KEYS:
+            try:
+                out[name] = float(value) if "." in value else int(value)
+            except ValueError:
+                out[name] = None
+        else:
+            out[name] = value
+    return out
+
+
+def extract_option(option_dir: Path) -> list:
+    """Walk one option directory and extract metrics for every graph."""
+    return [extract_metrics(p) for p in sorted(option_dir.glob("*.log"))]
 \end{tcblisting}
+
+The full pipeline contains additional modules - \texttt{ingest.py}, \texttt{preprocess.py}, \texttt{parse.py}, \texttt{analyze.py}, \texttt{compare.py}, \texttt{report.py}, \texttt{llm.py} and \texttt{notify.py} - whose roles are described in Chapter 4. The listing above is included as a representative example because the metric extraction stage is the most heavily exercised part of the pipeline in production.

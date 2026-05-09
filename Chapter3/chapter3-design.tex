@@ -43,7 +43,11 @@ The data collection stage begins with the execution of software test cases on th
 	\label{fig:datacoll}
 \end{figure}
 
-The directory layout used for storage mirrors the option-graph hierarchy: \texttt{<regression\_id>/<option>/<graph>.log}. This layout is chosen so that the downstream comparison engine can iterate over graphs and pivot across options without any extra metadata file. The ingestion module also writes a small manifest that records the timestamp of each log, the build identifier of the emulation image and the random seed used for the test, so that any regression can be reproduced bit-exactly later.
+The directory layout used for storage mirrors the option-graph hierarchy:
+\begin{center}
+\texttt{<regression\_id> / <option> / <graph>.log}
+\end{center}
+This layout is chosen so that the downstream comparison engine can iterate over graphs and pivot across options without any extra metadata file. The ingestion module also writes a small manifest that records the timestamp of each log, the build identifier of the emulation image and the random seed used for the test, so that any regression can be reproduced bit-exactly later.
 
 \subsubsection{Stage 2 - Log Processing}
 The log processing stage takes the raw log files as input and produces structured logs and feature vectors. It consists of three parallel paths: a preprocessing path that normalizes and cleans the raw text, a parsing path that uses LogPAI's Drain algorithm to extract templates, and a feature extraction path that builds numeric feature vectors for downstream ML. The flow is shown in Figure \ref{fig:logproc}.
